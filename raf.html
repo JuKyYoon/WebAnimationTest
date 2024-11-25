@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin : 8%;
+    }
+
+    .box {
+      background-color: blue;
+      width: 100px;
+      height: 100px;
+    }
+
+    #first {
+      transition: transform 5s ease;
+    }
+
+    h2:hover ~ #first  {
+      transform: translateX(500px)
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(0px); }
+      to { opacity: 1; transform: translateX(500px); }
+    }
+
+    #second {
+      animation-name: slideIn;
+      animation-duration: 5s;
+      animation-delay: 0s;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      animation-direction:alternate;
+      animation-fill-mode:forwards;
+
+    }
+
+    .container {
+      margin-bottom: 100px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>CSS Animation</h2>
+    <h4>linear / 5초동안 500px 이동</h4>
+    <div class="box" id="second"></div>
+  </div>
+
+  <div class="container">
+    <h2>Javascript</h2>
+    <h4>linear / 한 프레임당 1.666 픽셀 이동</h4>
+    <div class="box" id="third"></div>
+  </div>
+
+  <script>
+    const box3 = document.getElementById("third");
+    let position = 0;
+    let isRight = true;
+
+    function move() {
+      if(isRight) {
+        position = Math.min(1.666 + position, 500);
+      } else {
+        position = Math.max(position - 1.666, 0);
+      }
+      box3.style.transform = `translateX(${position}px)`;
+
+      if (position >= 500) {
+        isRight = false
+      } else if (position <= 0) {
+        isRight = true
+      }
+
+      // 무한반복
+      requestAnimationFrame(move);
+    }
+    requestAnimationFrame(move);
+
+  </script>
+
+</body>
+</html>
