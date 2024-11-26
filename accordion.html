@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    /* 임시 CSS - 수정 혹은 삭제 예정 */
+    .accordion-header {
+      width: 100%;
+      border: 1px solid black;
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;
+    }
+
+    .accordion-button {
+      position: relative;
+      display: flex;
+      text-align: left;
+      cursor: pointer;
+      padding: 0.7rem;
+    }
+
+    .accordion-button.collapsed::after {
+      transform: rotate(-180deg);
+      transform-origin: 50% 50%;
+    }
+
+    /* content 비우고, background-image로 설정해야 제대로 회전가능*/
+    .accordion-button::after {
+      content: '';
+      background-image: url('./arrow.png');
+      background-size: 1rem 1rem;
+      width: 1rem;
+      height: 1rem;
+      transition: transform 0.2s ease;
+    }
+
+    /* 임시 CSS - 수정 혹은 삭제 예정 */
+    .v-enter-active, .v-leave-active {
+      transition: height 0.5s ease;
+      overflow: hidden;
+    }
+
+    /* 진입 전, 전출 후*/
+    .v-enter-from, .v-leave-to {
+      height: 0;
+    }
+
+    .accordion-body {
+      padding: 0.9rem;
+      overflow: auto;
+    }
+
+    .close {
+      display: none;
+    }
+
+    .content {
+      margin: 100px 20vw;
+    }
+
+    button {
+      background-color: transparent ;
+      border: 1px solid black;
+      border-radius: 10px;
+      padding: 0px 10px;
+    }
+
+    button:hover {
+      background-color: antiquewhite;
+      cursor: pointer;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="content">
+    <div class="accordion">
+      <div class="accordion-item">
+        <div class="accordion-header">
+          First
+          <button class="accordion-button" onclick="toggleAccordion(0)"></button>
+        </div>
+        <div class="accordion-collapse close">
+          <div class="accordion-body">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus quisquam molestiae similique aspernatur quas! Sed facere consequatur repudiandae aut quidem vitae, saepe dolore incidunt. Suscipit, quasi excepturi! Eius, omnis eum?
+          </div>
+        </div>
+
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header">
+          Second
+          <button class="accordion-button" onclick="toggleAccordion(1)"></button>
+        </div>
+        <div class="accordion-collapse close">
+          <div class="accordion-body">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Exercitationem natus id dicta optio nemo repellat perferendis minus quod porro veritatis culpa ad quae nulla, enim molestias temporibus non perspiciatis fuga.
+          Saepe esse nisi quibusdam rerum atque vitae maxime officiis eveniet, molestias tempore minima fugiat corporis consequuntur, iusto iure consequatur amet alias impedit ab fuga id quam? Sunt in corporis aliquam.
+          Ad accusantium dolorem tenetur, neque iusto quos fugit enim tempore. Expedita soluta similique maiores officia. Quis officiis assumenda rem minus temporibus a autem adipisci, quam eos in ad vero aliquid?
+          Debitis quae voluptates magnam commodi, quasi harum necessitatibus est exercitationem et cupiditate aspernatur beatae odio libero saepe totam voluptate adipisci reprehenderit sint? Asperiores at ipsum quod fugiat illum dolorum obcaecati.
+          Nemo porro hic beatae maiores eos quis placeat facere eius cupiditate qui possimus iure, obcaecati tempora dignissimos optio nisi deleniti velit, nobis id corrupti. A voluptatum repudiandae voluptatibus veniam temporibus?</div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header">
+          Third
+          <button class="accordion-button"  onclick="toggleAccordion(2)"></button>
+        </div>
+        <div class="accordion-collapse close">
+          <div class="accordion-body">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Non exercitationem odit iste libero quae earum! Non vitae alias autem deleniti dignissimos veritatis, harum laborum, in dolores distinctio ipsam corrupti pariatur?
+          Aperiam, debitis aliquid molestias eligendi expedita vitae in delectus assumenda labore rem, pariatur porro beatae, soluta eveniet non ea similique explicabo minus eos dolor libero accusantium. Aliquid vero fugit eius.</div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+
+  <script>
+    const accordionList = document.getElementsByClassName('accordion-collapse')
+    const accordionButton = document.getElementsByClassName('accordion-button')
+
+
+    // 트랜지션 함수
+    const enterTransition = (el) => {
+      el.style.display = 'block'; // 보이도록 설정
+      el.classList.add('v-enter-from', 'v-enter-active');
+
+      // 목표 높이 
+      el.style.height = `${el.scrollHeight}px`
+
+      requestAnimationFrame(() => {
+        el.classList.remove('v-enter-from');
+        el.classList.add('v-enter-to');
+      });
+
+      el.addEventListener(
+        'transitionend',
+        () => {
+          el.classList.add('active');
+          el.classList.remove('v-enter-active', 'v-enter-to', 'close');
+        },
+        { once: true }
+      );
+    };
+
+
+
+    const leaveTransition = (el) => {
+      el.classList.add('v-leave-from', 'v-leave-active');
+
+      el.style.height = '0px'
+
+      // 다음 1프레임 후
+      requestAnimationFrame(() => {
+        el.classList.remove('v-leave-from');
+        el.classList.add('v-leave-to', 'close');
+      })
+
+      el.addEventListener(
+        'transitionend',
+        () => {
+          el.classList.remove('v-leave-active', 'v-leave-to', 'active');
+          el.style.display = 'none'; // 트랜지션 후 숨기기
+        },
+        { once: true }
+      );
+    };
+
+    function toggleAccordion(idx) {
+
+      // 열려있는 컴포넌트 닫기
+      let i = 0
+      for(let e of accordionList) {
+        if (i !== idx && !e.classList.contains('close')) {
+          accordionButton[i].classList.remove('collapsed')
+          leaveTransition(e)
+        }
+        i+=1
+      }
+
+      // 열려있는지 닫혀있는지 검사 핋요
+      const el = accordionList[idx]
+      const isOpen = !el.classList.contains('close')
+      if(isOpen) {
+        accordionButton[idx].classList.remove('collapsed')
+        leaveTransition(el)
+      } else {
+        accordionButton[idx].classList.add('collapsed')
+        enterTransition(el)
+      }
+    }
+  </script>
+</body>
+</html>

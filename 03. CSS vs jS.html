@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProgressBar Animation</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    
+    .progress-container {
+      width: 80%;
+      height: 30px;
+      background-color: #e0e0e0;
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+      margin: 0 auto;
+    }
+    
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #4caf50, #81c784);
+      border-radius: 15px 0 0 15px;
+    }
+
+    @keyframes prBar {
+      from {
+        width: 0%;
+      }
+      to {
+        width: 100%;
+      }
+    }
+
+    #progressBar1 {
+      transition: width 0.05s ease;
+    }
+
+    #progressBar2 {
+      animation-name: prBar;
+      animation-iteration-count: infinite;
+      animation-duration: 5s;
+      animation-timing-function: cubic-bezier(0, 0, 1, 1);
+      
+    }
+
+    #progressBar3 {
+
+    }
+
+
+    .box {
+      width: 80%;
+      padding: 30px;
+      margin: 30px;
+      text-align: center;
+      border : 1px solid black;
+      border-radius: 3px;
+    }
+
+    .answer {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h3>5초동안 너비가 0 -> 100</h3>
+  <button onclick="show()">표시</button>
+
+  <div class="box">
+    <h3 class="answer">setInterval</h3>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar1"></div>
+    </div>
+  
+  </div>
+
+  <div class="box">
+    <h3 class="answer">css Animation</h3>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar2"></div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3 class="answer">requestAnimationFrame</h3>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar3"></div>
+    </div>
+  </div>
+
+  <script>
+    const progressBar = document.getElementById('progressBar1');
+    const progressBar3 = document.getElementById('progressBar3');
+    const startButton = document.getElementById('startButton');
+
+    const start1 =  () => {
+      let progress = 0;
+      progressBar.style.width = '0%';
+      const interval = setInterval(() => {
+        progress += 1;
+        progressBar.style.width = `${progress}%`;
+      
+        if (progress >= 100) {
+          progress = 0
+          // clearInterval(interval);
+        }
+      }, 50); // Adjust speed: 50ms per step
+    }
+
+    const start3 = () => {
+      let progress = 0;
+      const duration = 5000; // 전체 진행 시간 (5초)
+      let startTime = performance.now(); // 애니메이션 시작 시간
+
+      // Reset the progress bar
+      progressBar3.style.width = '0%';
+
+      const animate = (currentTime) => {
+        const elapsedTime = currentTime - startTime; // 경과 시간
+        progress = Math.min((elapsedTime / duration) * 100, 100); // 진행률 계산
+        
+        progressBar3.style.width = `${progress}%`;
+        // 무한반복
+        if(progress >= 100) {
+          progress = 0
+          startTime = currentTime; // 사이클 시간 갱신
+        }
+
+
+        // if (progress < 100) {
+          requestAnimationFrame(animate); // 다음 프레임 호출
+        // }
+      };
+    
+      requestAnimationFrame(animate); // 애니메이션 시작
+    };
+
+    const show = () => {
+      const answer = document.getElementsByClassName('answer');
+      for(let el of answer) {
+        el.style.display = 'block'
+      }
+    }
+
+
+    start1()
+    start3()
+    
+  </script>
+</body>
+</html>
